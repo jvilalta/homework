@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ror-poc-metrics
+  namespace: ror-poc
+  labels:
+    app: ror-poc
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: ror-poc
+      release: prometheus
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - ror-poc

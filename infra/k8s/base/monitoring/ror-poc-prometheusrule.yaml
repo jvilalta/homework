@@ -1,0 +1,59 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ror-poc-alerts
+  namespace: ror-poc
+  labels:
+    app: ror-poc
+    release: prometheus
+spec:
+  groups:
+    - name: ror-poc.rules
+      rules:
+        # High error rate
+        - alert: HighErrorRate
+          expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+          for: 5m
+          annotations:
+            summary: "Error rate above 5% for 5 minutes"
+            description: "The application {{ $labels.instance }} has an error rate above 5% for more than 5 minutes"
+
+        # Slow response times
+        - alert: SlowResponseTime
+          expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+          for: 10m
+          annotations:
+            summary: "95th percentile response time above 2s"
+            description: "The application {{ $labels.instance }} has 95th percentile response time above 2 seconds for more than 10 minutes"
+
+        # High memory usage
+        - alert: HighMemoryUsage
+          expr: container_memory_usage_bytes{container="ror-poc"} / container_spec_memory_limit_bytes{container="ror-poc"} > 0.85
+          for: 5m
+          annotations:
+            summary: "Memory usage above 85%"
+            description: "Container {{ $labels.container }} in pod {{ $labels.pod }} has memory usage above 85% for more than 5 minutes"
+
+        # Pod restarts
+        - alert: FrequentPodRestarts
+          expr: rate(kube_pod_container_status_restarts_total{container="ror-poc"}[1h]) > 0.1
+          for: 5m
+          annotations:
+            summary: "Pod restarting frequently"
+            description: "Container {{ $labels.container }} in pod {{ $labels.pod }} is restarting frequently (more than 0.1 times per hour)"
+
+        # High CPU usage
+        - alert: HighCPUUsage
+          expr: rate(container_cpu_usage_seconds_total{container="ror-poc"}[5m]) / container_spec_cpu_quota{container="ror-poc"} * container_spec_cpu_period{container="ror-poc"} > 0.8
+          for: 5m
+          annotations:
+            summary: "CPU usage above 80%"
+            description: "Container {{ $labels.container }} in pod {{ $labels.pod }} has CPU usage above 80% for more than 5 minutes"
+
+        # CPU throttling
+        - alert: CPUThrottling
+          expr: rate(container_cpu_cfs_throttled_seconds_total{container="ror-poc"}[5m]) > 0.1
+          for: 5m
+          annotations:
+            summary: "Container CPU throttling detected"
+            description: "Container {{ $labels.container }} in pod {{ $labels.pod }} is being CPU throttled, indicating resource limits are too low"

@@ -1,0 +1,6 @@
+resources:
+  - ../../base/namespaces/
+  - ../../base/apps/
+  - ../../base/services/
+  - ../../base/ingresses/
+  - ../../base/monitoring/
