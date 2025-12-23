@@ -1,9 +1,3 @@
-repositories:
-  - name: grafana
-    url: https://grafana.github.io/helm-charts
-  - name: open-telemetry
-    url: https://open-telemetry.github.io/opentelemetry-helm-charts
-
 releases:
   - name: prometheus
     namespace: ror-poc
@@ -143,14 +137,3 @@ releases:
             enabled: true
             labels:
               release: prometheus
-  - name: otel-collector
-    namespace: ror-poc
-    chart: open-telemetry/opentelemetry-collector
-    values:
-      - image:
-          repository: "otel/opentelemetry-collector-k8s"
-        mode: daemonset
-        service:
-          enabled: true
-          type: ClusterIP
-    createNamespace: true
