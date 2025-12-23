@@ -105,3 +105,6 @@ Used ChatGPT and the Anthropic Claude models to help with the following:
 - Copilot was also used to help write this file, including reading through the codebase to understand how the application is instrumented for metrics and generating the relevant sections.
 - The syntax of the alerting rules for Prometheus was generated with the help of Claude.
 - Troubleshooting of the Rails app and instrumentation issues was done with the help of Copilot.
+
+## Notes
+There is a setup script in the scripts folder that runs through most of the steps described here. You can run that to set up the environment and deploy the application quickly, but you will need to manually install the prerequisites on the VM first and setup the AGE keys if you want to use sops for secrets management.
